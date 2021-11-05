@@ -17,7 +17,7 @@ const ShipProto =  {
     }
 }
 
-const Ship = (originInt, length) => {
+const Ship = (originInt, lenght) => {
     const shipLength = length;
     const shipRep = [];
     for (let i = 0; i < shipLength; i++) {

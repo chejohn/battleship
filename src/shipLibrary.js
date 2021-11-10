@@ -1,5 +1,4 @@
 const ShipProto =  {
-    // marks where the ship has been hit
     hit(number) {
         const shipRepArr = this.shipRep;
         for(let i = 0; i < shipRepArr.length; i++) {
@@ -17,7 +16,7 @@ const ShipProto =  {
     }
 }
 
-const Ship = (originInt, lenght) => {
+const Ship = (originInt, length) => {
     const shipLength = length;
     const shipRep = [];
     for (let i = 0; i < shipLength; i++) {

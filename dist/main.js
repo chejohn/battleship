@@ -31,97 +31,6 @@ __webpack_require__.r(__webpack_exports__);
 // ship is represented by an 'o' on the gameboard
 // misssed hits are represented by an 'x' on the gameboard
 // attacked ships are represented by an '*' on the gameboard
-const GameBoardProto = {
-    convertToCoordinates(dataID) {
-        let col;
-        let row;
-        if (dataID % 10 === 0) {
-            col = 9;
-            row = dataID/10 - 1;
-        } 
-        else {
-            col = (dataID % 10) - 1;
-            row = Math.floor(dataID / 10); 
-        }
-        return [row, col];
-    },
-    cacheShipData(newShip, shipOrientation, originCoordinates) {
-        let [row, col] = originCoordinates;
-        const cachedCoordinates = [];
-        for (let i = 0; i < newShip.shipLength; i++) {
-            if (i == 0) cachedCoordinates.push(originCoordinates);
-            else {
-                if (shipOrientation === 'x') cachedCoordinates.push([row, ++col]);
-                else cachedCoordinates.push([++row, col]);
-            }
-        }
-        const dataObj = {
-            shipOrientation,
-            ship: newShip,
-            cachedCoordinates
-        }
-        this.cachedShips.push(dataObj);
-    },
-    validateInput(originCoordinates, shipLength) {
-        const [row, col] = originCoordinates;
-        if (this.currentOrientation === 'x') {
-           if (col + (shipLength - 1) > 9) return false;
-        } 
-        else {
-            if (row + (shipLength - 1) > 9) return false;
-        }
-        return true;
-    },
-    placeShip(dataID, shipLength) {
-        const originCoordinates = this.convertToCoordinates(dataID);
-        const validInput = this.validateInput(originCoordinates, shipLength);
-
-        if (validInput) {
-            let [row, col] = originCoordinates;
-            const shipOrientation = this.currentOrientation;
-            let newShip;
-            if (shipOrientation === 'x') newShip = (0,_ShipLibrary__WEBPACK_IMPORTED_MODULE_1__.Ship)(col, shipLength);
-            else newShip = (0,_ShipLibrary__WEBPACK_IMPORTED_MODULE_1__.Ship)(row, shipLength);
-            this.cacheShipData(newShip, shipOrientation, originCoordinates);
-            for (let i = 0; i < shipLength; i++) {
-              if (i == 0) this.gameState[row][col] = 'o';
-              else {
-                if (shipOrientation === 'x') this.gameState[row][++col] = 'o';
-                else this.gameState[++row][col] = 'o';
-              }
-            }
-        }
-    },
-    recieveAttack(dataID) {
-        const attackCoordinates = this.convertToCoordinates(dataID);
-        const [row, col] = attackCoordinates;
-        if (this.gameState[row][col] === null) {
-            this.gameState[row][col] = 'x';
-        }
-        else if (this.gameState[row][col] === 'o') {
-            this.gameState[row][col] = '*';
-            let breakFromOuter = false;
-            for (let shipData of this.cachedShips) {
-                for (let xyPair of shipData.cachedCoordinates) {
-                    if (JSON.stringify(xyPair) === JSON.stringify(attackCoordinates)) {
-                        const ship = shipData.ship;
-                        if (shipData.shipOrientation === 'x') ship.hit(col);
-                        else ship.hit(row);
-                        breakFromOuter = true;
-                        break;
-                    }
-                }
-                if (breakFromOuter) break;
-            }
-        }
-    },
-    fleetDestroyed() {
-        for (let shipData of this.cachedShips) {
-            if (!shipData.ship.isSunk()) return false;
-        }
-        return true;
-    }
-};
 
 const GameBoard = () => {
     const gameState = [
@@ -138,15 +47,118 @@ const GameBoard = () => {
     ];
     let currentOrientation = 'x';
     const cachedShips = [];
-    return Object.create(GameBoardProto, {
-        gameState: {value: gameState},
-        currentOrientation: {
-            value: currentOrientation,
-            writable: true
-        },
-        cachedShips: {value: cachedShips} 
-    })
+    
+    const convertToCoordinates = (dataID) => {
+        let col;
+        let row;
+        if (dataID % 10 === 0) {
+            col = 9;
+            row = dataID/10 - 1;
+        } 
+        else {
+            col = (dataID % 10) - 1;
+            row = Math.floor(dataID / 10); 
+        }
+        return [row, col];
+    }
+
+    const cacheShipData = (newShip, shipOrientation, originCoordinates) => {
+        let [row, col] = originCoordinates;
+        const cachedCoordinates = [];
+        for (let i = 0; i < newShip.shipLength; i++) {
+            if (i == 0) cachedCoordinates.push(originCoordinates);
+            else {
+                if (shipOrientation === 'x') cachedCoordinates.push([row, ++col]);
+                else cachedCoordinates.push([++row, col]);
+            }
+        }
+        const dataObj = {
+            shipOrientation,
+            ship: newShip,
+            cachedCoordinates
+        }
+        cachedShips.push(dataObj);
+    }
+
+    const validateInput = (originCoordinates, shipLength) => {
+        const [row, col] = originCoordinates;
+        if (currentOrientation === 'x') {
+           if (col + (shipLength - 1) > 9) return false;
+        } 
+        else {
+            if (row + (shipLength - 1) > 9) return false;
+        }
+        return true;
+    }
+
+    const placeShip = (dataID, shipLength) => {
+        const originCoordinates = convertToCoordinates(dataID);
+        const validInput = validateInput(originCoordinates, shipLength);
+
+        if (validInput) {
+            let [row, col] = originCoordinates;
+            const shipOrientation = currentOrientation;
+            let newShip;
+            if (shipOrientation === 'x') newShip = (0,_ShipLibrary__WEBPACK_IMPORTED_MODULE_1__.Ship)(col, shipLength);
+            else newShip = (0,_ShipLibrary__WEBPACK_IMPORTED_MODULE_1__.Ship)(row, shipLength);
+            cacheShipData(newShip, shipOrientation, originCoordinates);
+            for (let i = 0; i < shipLength; i++) {
+              if (i == 0) gameState[row][col] = 'o';
+              else {
+                if (shipOrientation === 'x') gameState[row][++col] = 'o';
+                else gameState[++row][col] = 'o';
+              }
+            }
+        }
+    }
+
+    const recieveAttack = (dataID) => {
+        const attackCoordinates = convertToCoordinates(dataID);
+        const [row, col] = attackCoordinates;
+        if (gameState[row][col] === null) {
+            gameState[row][col] = 'x';
+        }
+        else if (gameState[row][col] === 'o') {
+            gameState[row][col] = '*';
+            let breakFromOuter = false;
+            for (let shipData of cachedShips) {
+                for (let xyPair of shipData.cachedCoordinates) {
+                    if (JSON.stringify(xyPair) === JSON.stringify(attackCoordinates)) {
+                        const ship = shipData.ship;
+                        if (shipData.shipOrientation === 'x') ship.hit(col);
+                        else ship.hit(row);
+                        breakFromOuter = true;
+                        break;
+                    }
+                }
+                if (breakFromOuter) break;
+            }
+        }
+    }
+
+    const changeOrientation = () => {
+        if (currentOrientation === 'x') currentOrientation = 'y';
+        else currentOrientation = 'x';
+    } 
+
+    const fleetDestroyed = () => {
+        for (let shipData of cachedShips) {
+            if (!shipData.ship.isSunk()) return false;
+        }
+        return true;
+    }
+    
+    return {
+        fleetDestroyed,
+        recieveAttack,
+        placeShip,
+        convertToCoordinates,
+        cachedShips,
+        gameState,
+        changeOrientation
+    }
 }
+
 
 
 
@@ -165,7 +177,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Ship": () => (/* binding */ Ship)
 /* harmony export */ });
 const ShipProto =  {
-    // marks where the ship has been hit
     hit(number) {
         const shipRepArr = this.shipRep;
         for(let i = 0; i < shipRepArr.length; i++) {
@@ -183,7 +194,7 @@ const ShipProto =  {
     }
 }
 
-const Ship = (originInt, lenght) => {
+const Ship = (originInt, length) => {
     const shipLength = length;
     const shipRep = [];
     for (let i = 0; i < shipLength; i++) {
@@ -264,76 +275,151 @@ var __webpack_exports__ = {};
   !*** ./src/index.js ***!
   \**********************/
 __webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Player": () => (/* binding */ Player),
+/* harmony export */   "Computer": () => (/* binding */ Computer)
+/* harmony export */ });
 /* harmony import */ var _GameBoardLibrary__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./GameBoardLibrary */ "./src/GameBoardLibrary.js");
 
 
-// computer players must have access to available moves;
-// players must be able to change gameboard orientation;
-// players must be able to place ships;
-// players must be able to attack another board;
-// overall: players should be able to interact with gameboards
+const Player = (userBoard) => {
+  const attack = (dataID) => {
+    compBoard.recieveAttack(dataID);
+  };
 
-// create a player object
-// create a computer object
+  const rotateShip = () => {
+    userBoard.changeOrientation();
+  };
 
-// for the computer to know whether it has sunk the user's ship
-// the user must tell the computer based on the user's board data;
+  const placeGamePiece = (dataID, length) => {
+    userBoard.placeShip(dataID, length);
+  };
 
-const Player = () => {
-    return {
-        attack(dataID) {
-            compBoard.recieveAttack(dataID);
-        },
-        rotateShip() {
-            if (userBoard.currentOrientation === 'x') userBoard.currentOrientation = 'y';
-            else userBoard.currentOrientation = 'x';
-        }, 
-        placeGamePiece(dataID, length) {
-            userBoard.placeShip(dataID, length);
-        },
-        queryHit(dataID) {
-            const [row, col] = userBoard.convertToCoordinates(dataID);
-            if (userBoard.gameState[row][col] === '*') return true;
-            return false;
-        },
-        querySink(dataID) {
-            
+  const queryHit = (dataID) => {
+    const [row, col] = userBoard.convertToCoordinates(dataID);
+    if (userBoard.gameState[row][col] === '*') return true;
+    return false;
+  };
+
+  const querySink = (dataID) => {
+    const attackCoordinates = userBoard.convertToCoordinates(dataID);
+    for (let shipData of userBoard.cachedShips) {
+      for (let coordinates of shipData.cachedCoordinates) {
+        if (JSON.stringify(attackCoordinates) === JSON.stringify(coordinates)) {
+          return shipData.ship.isSunk();
         }
-    };
-}
-
-const Computer = () => {
-    const availableMoves = [];
-    for (let i = 1; i <= 100; i++) {
-        availableMoves.push(i);
+      }
     }
-    return { 
-        availableMoves,
-        cachedHitAreas: [],
-        chooseMove() {
-            if (this.cachedHitAreas.length < 1) {
-                const randIndex = Math.floor(Math.random() * this.cachedHitAreas.length);
-                const dataID = this.availableMoves.splice(randIndex, 1)[0];
-                return dataID;
-            } 
-            else {
+  };
+  return {
+    attack,
+    rotateShip,
+    placeGamePiece,
+    queryHit,
+    querySink,
+  };
+};
 
-            }
-        },
-        attack() {
-            const dataID = chooseMove();
-            userBoard.recieveAttack(dataID);
-            const hit = user.queryHit(dataID);
-            if (hit) this.cachedHitAreas.push(dataID);
-        },
-        rotateShip() {
+const Computer = (compBoard, user) => {
+  const availableMoves = [];
+  for (let i = 1; i <= 100; i++) {
+    availableMoves.push(i);
+  }
+  const operandData = {
+    operands: [-1, 1, -10, 10],
+    currOperand: null,
+    effectiveOperand: null,
+  };
+  let tempHitAreas = [];
 
-        },
-        placeGamePiece() {
+  const validDataID = (hitArea, operand = 0) => {
+    let aleredOperand;
+    if (operand % 10 === 0 || operand % 10 === -0) aleredOperand = operand/10;
+    const [row, col] = compBoard.convertToCoordinates(hitArea);
+  
+    if (operand === 1 || operand === -1) {
+        if (col + operand < 0 || col + operand > 9) return false;
+    }
+    if (operand === 10 || operand === -10) {
+        if (row + aleredOperand < 0 || row + aleredOperand > 9) return false;
+    }
+    for (let move of availableMoves) {
+        if (move === hitArea + operand) return true;
+    }
+    return false;
+  }
 
+  const chooseMove = () => {
+      let dataID;
+      if (tempHitAreas.length < 1) {
+          const randIndex = Math.floor(Math.random() * availableMoves.length);
+          dataID = availableMoves.splice(randIndex, 1)[0];
+      }
+      else if (tempHitAreas.length <= 1) {
+        const operands = operandData.operands;
+        while(!validDataID(tempHitAreas[0], operands[operands.length - 1])) {
+          operands.pop();
         }
-    };
-}
+        operandData.currOperand = operands.pop();
+        dataID = tempHitAreas[0] + operandData.currOperand;
+      } else {
+          if (operandData.effectiveOperand) dataID = tempHitAreas[tempHitAreas.length - 1] + operandData.currOperand;
+          else {
+              operandData.currOperand = -1 * operandData.currOperand;
+              dataID = operandData.currOperand + tempHitAreas[0];
+          }
+          if (!validDataID(dataID)) {
+            operandData.currOperand = -1 * operandData.currOperand;
+            dataID = operandData.currOperand + tempHitAreas[0]; 
+          }
+      }
+      for (let i = 0; i < availableMoves.length; i++) {
+          if (availableMoves[i] === dataID) {
+              availableMoves.splice(i, 1);
+              break;
+          }
+      }
+      return dataID;
+  };
+
+  const attack = () => {
+    const dataID = chooseMove();
+    userBoard.recieveAttack(dataID);
+    const hit = user.queryHit(dataID);
+    if (hit) {
+        const sunk = user.querySink(dataID);
+        if (sunk) {
+            operandData.operands = [-1, 1, -10, 10];
+            operandData.currOperand = null;
+            operandData.effectiveOperand = null;
+            tempHitAreas = [];
+        } else {
+            tempHitAreas.push(dataID);
+            if (tempHitAreas.length > 1) operandData.effectiveOperand = true;
+        }
+    }
+    else if (!hit && tempHitAreas.length > 1) operandData.effectiveOperand = false;
+  };
+
+  const rotateShip = () => {
+    if (Math.random() < 0.5) compBoard.changeOrientation();
+  };
+
+  const placeGamePiece = () => {
+    const lengths = [];
+  };
+
+  return {
+    attack,
+    rotateShip,
+    placeGamePiece,
+  };
+};
+
+
+
+
+
 
 })();
 

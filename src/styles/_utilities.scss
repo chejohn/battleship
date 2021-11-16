@@ -1,0 +1,53 @@
+
+$defaultFont-size: 24px;
+$cursor-status: pointer;
+
+@mixin format-soundIcon {
+    width: 30px;
+    opacity: 0.9;
+    transition: opacity 0.2s;
+    cursor: pointer;
+    &:hover {opacity: 1;}
+    position: absolute;
+}
+
+@mixin format-container {
+    height: 100%;
+    display: grid;
+    text-align: center;
+}
+
+@mixin format-footer {
+    background-image: linear-gradient(90deg, rgb(126, 126, 126) 0%, rgb(205, 205, 203) 29%, rgb(181, 181, 181) 76%, rgb(122, 122, 122) 100%);
+    font-family: 'Big Shoulders Display', cursive;
+    font-weight: bold;
+    img {
+        width: 30px;
+        position: relative;
+        top: 7px;
+        opacity: 0.5;
+
+        &:hover {opacity: 1;}
+    }
+    p {
+        display: inline-block;
+        margin-top: 20px;
+    }
+    a {color: black}
+}
+
+@mixin formatMain {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+@mixin formatButton {
+    margin-top: 30px;
+    border: none;
+    padding: 15px;
+    border-radius: 5px;
+    &:hover {opacity: 0.9;}
+    cursor: pointer;
+}

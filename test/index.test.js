@@ -1,6 +1,6 @@
 import {Ship} from '../src/ShipLibrary';
 import { GameBoard } from '../src/GameBoardLibrary';
-import {Player, Computer} from '../src/index.js'
+import {Player, Computer} from '../src/PlayerLibrary.js'
 // testing ship 'Hit' function
 
 describe('test ship library', () => {
@@ -50,6 +50,23 @@ describe('test gameboard library', () => {
       [null, null, null, null, null, null, null, null, null, null],
     ]);
     gameBoard.placeShip(98, 4);
+    expect(gameBoard.gameState).toEqual([
+      ['o', null, 'o', 'o', null, null, null, null, null, null],
+      ['o', null, null, null, null, 'o', null, null, null, null],
+      ['o', null, null, null, null, 'o', null, null, null, null],
+      ['o', null, null, null, null, 'o', null, null, null, null],
+      ['o', null, null, null, null, 'o', null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, 'o', 'o', 'o', null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
+    ]);
+    gameBoard.changeOrientation();
+    gameBoard.placeShip(2, 5);
+    gameBoard.placeShip(17, 4);
+    gameBoard.changeOrientation();
+    gameBoard.placeShip(77, 3);
     expect(gameBoard.gameState).toEqual([
       ['o', null, 'o', 'o', null, null, null, null, null, null],
       ['o', null, null, null, null, 'o', null, null, null, null],

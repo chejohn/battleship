@@ -1,4 +1,285 @@
-/*!*********************************************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/index.scss ***!
-  \*********************************************************************************************************/
+/*!****************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/styles/index.scss ***!
+  \****************************************************************************************************************/
+*, *::before {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: inherit;
+}
 
+body {
+  height: 100vh;
+  background-image: linear-gradient(90deg, #020024 0%, #00003d 29%, #000040 76%, #010025 100%);
+  font-family: "Bebas Neue", cursive;
+}
+
+.container {
+  height: 100%;
+  display: grid;
+  text-align: center;
+  grid-template: auto 1fr 60px/1fr;
+}
+.container header img {
+  margin-top: 12px;
+  transform: scale(0.9);
+}
+.container main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.container main .sound-icon {
+  width: 30px;
+  opacity: 0.9;
+  transition: opacity 0.2s;
+  cursor: pointer;
+  position: absolute;
+  top: 170px;
+}
+.container main .sound-icon:hover {
+  opacity: 1;
+}
+.container main form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 24px;
+}
+.container main form label {
+  margin-bottom: 15px;
+  color: white;
+}
+.container main form button {
+  margin-top: 30px;
+  border: none;
+  padding: 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.container main form button:hover {
+  opacity: 0.9;
+}
+.container main form input {
+  padding: 10px;
+}
+.container main,
+.container header {
+  animation: phaseIn 2s;
+}
+.container footer {
+  background-image: linear-gradient(90deg, #7e7e7e 0%, #cdcdcb 29%, #b5b5b5 76%, #7a7a7a 100%);
+  font-family: "Big Shoulders Display", cursive;
+  font-weight: bold;
+}
+.container footer img {
+  width: 30px;
+  position: relative;
+  top: 7px;
+  opacity: 0.5;
+}
+.container footer img:hover {
+  opacity: 1;
+}
+.container footer p {
+  display: inline-block;
+  margin-top: 20px;
+}
+.container footer a {
+  color: black;
+}
+
+@media (min-height: 1024px) {
+  .container main form {
+    transform: scale(1.8);
+    bottom: 50%;
+  }
+}
+@media (max-width: 800px) {
+  .container header img {
+    width: 500px;
+  }
+  .container main .sound-icon {
+    top: 120px;
+  }
+}
+@media (max-width: 750px) {
+  .container header img {
+    width: 350px;
+  }
+  .container main .sound-icon {
+    top: 90px;
+  }
+}
+@media (max-width: 600px) {
+  .container footer p {
+    font-size: 13px;
+  }
+  .container footer img {
+    width: 25px;
+  }
+}
+@media (max-width: 320px) {
+  .container header img {
+    width: 300px;
+  }
+  .container main form {
+    transform: scale(0.8);
+  }
+  .container footer p {
+    font-size: 11px;
+  }
+  .container footer img {
+    width: 20px;
+  }
+}
+@media (max-width: 290px) {
+  .container header img {
+    width: 250px;
+  }
+  .container main .sound-icon {
+    top: 80px;
+  }
+}
+@keyframes phaseIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.container header .logo-game {
+  width: 280px;
+  margin-top: 10px;
+}
+.container main p,
+.container main .bttn-orientation,
+.container main .gameboard {
+  margin: 5px;
+}
+.container main p {
+  color: white;
+  opacity: 0.9;
+  font-size: 40px;
+  margin-top: 20px;
+}
+.container main .bttn-orientation {
+  font-size: 24px;
+  padding: 8px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 14px;
+}
+.container main .bttn-orientation:hover {
+  opacity: 0.9;
+}
+.container main .sound-icon-game {
+  width: 30px;
+  opacity: 0.9;
+  transition: opacity 0.2s;
+  cursor: pointer;
+  position: absolute;
+  position: absolute;
+  top: 23px;
+  right: 60px;
+}
+.container main .sound-icon-game:hover {
+  opacity: 1;
+}
+.container main .gameboard {
+  display: grid;
+  grid-template: repeat(10, 1fr)/repeat(10, 1fr);
+  gap: 2px;
+  width: 500px;
+  height: 500px;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+.container main .gameboard * {
+  border: 1px solid white;
+}
+.container main .gameboard *:hover {
+  background-color: lightgray;
+}
+
+@media (max-width: 540px) {
+  .container header .logo-game {
+    width: 180px;
+  }
+  .container main .sound-icon-game {
+    width: 20px;
+    right: 25px;
+    top: 20px;
+  }
+  .container main .gameboard {
+    width: 300px;
+    height: 300px;
+  }
+  .container main p {
+    font-size: 25px;
+  }
+}
+@media (max-width: 321px) {
+  .container main .gameboard {
+    width: 280px;
+    height: 280px;
+  }
+}
+@media (max-width: 290px) {
+  .container main .sound-icon-game {
+    right: 0;
+  }
+  .container main .gameboard {
+    width: 250px;
+    height: 250px;
+  }
+}
+.container .game-console {
+  width: 70%;
+  min-height: 55px;
+  background-image: linear-gradient(90deg, #373737 0%, #292929 29%, #292929 76%, #383838 100%);
+  color: #DDDDDD;
+  font-family: "Special Elite", cursive;
+  border: 1px solid #dddddd;
+  border-radius: 40px;
+  font-size: 1.4rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem;
+  margin-top: 1rem;
+}
+.container .gameBoard-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.container .gameBoard-container .gb-subcontainer {
+  margin: 1rem 1.6rem 1.6rem 1.6rem;
+}
+.container .gameBoard-container .gb-subcontainer p {
+  margin-top: 0;
+}
+.container .gameBoard-container .gb-subcontainer .gameboard {
+  margin-bottom: 0;
+}
+
+@media (max-width: 1122px) {
+  .container .gameBoard-container {
+    flex-direction: column-reverse;
+  }
+  .container .gameBoard-container .gb-subcontainer:nth-child(2) {
+    margin-top: 2.5rem;
+  }
+}
+@media (max-width: 600px) {
+  .container .game-console {
+    font-size: 1rem;
+  }
+}
+
+/*# sourceMappingURL=main.css.map*/

@@ -1,0 +1,92 @@
+.container {
+    header {
+        .logo-game {
+            width: 280px;
+            margin-top: 10px;
+        }
+    }
+    main {
+        p, 
+        .bttn-orientation,
+        .gameboard {
+            margin: 5px;
+        }
+        p {
+            color: white;
+            opacity: 0.9;
+            font-size: 40px;
+            margin-top: 20px;
+        }
+        .bttn-orientation {
+            font-size: $defaultFont-size;
+            padding: 8px;
+            border: none;
+            border-radius: 5px;
+            cursor: $cursor-status;
+            margin-bottom: 14px;
+            &:hover {
+                opacity: 0.9;
+            }
+        }
+        .sound-icon-game {
+            @include format-soundIcon;
+            position: absolute;
+            top: 23px;
+            right: 60px;
+        }
+        .gameboard {
+            display: grid;
+            grid-template: repeat(10, 1fr)/repeat(10, 1fr);
+            gap: 2px;
+            width: 500px;
+            height: 500px; 
+            margin-bottom: 20px;
+            cursor: $cursor-status;
+            * {
+                border: 1px solid white;
+                &:hover {background-color: lightgray;}
+            }
+        }
+    }
+}
+
+@media (max-width: 540px) {
+    .container {
+        header {.logo-game {width: 180px;}}
+        main {
+            .sound-icon-game {
+                width: 20px;
+                right: 25px;
+                top: 20px;
+            }
+            .gameboard {
+                width: 300px;
+                height: 300px;
+            }
+            p {font-size: 25px;}
+        }
+    }
+}
+
+@media (max-width: 321px) {
+    .container {
+        main {
+            .gameboard {
+                width: 280px;
+                height: 280px;
+            }
+        }
+    }
+}
+
+@media (max-width: 290px) {
+    .container {
+        main {
+            .sound-icon-game {right: 0;}
+            .gameboard {
+                width: 250px;
+                height: 250px;
+            }
+        }
+    }
+}

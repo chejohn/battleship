@@ -1,6 +1,14 @@
 
 $defaultFont-size: 24px;
 $cursor-status: pointer;
+$shipPosition: absolute;
+
+@mixin formatShip {
+    position: absolute;
+    border: none;
+    z-index: -1;
+    filter: invert(69%) sepia(94%) saturate(884%) hue-rotate(172deg) brightness(100%) contrast(94%);
+}
 
 @mixin format-soundIcon {
     width: 30px;

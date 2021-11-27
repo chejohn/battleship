@@ -52,12 +52,7 @@ body {
 
 @media (min-height: 1024px) {
     .container {
-        main {
-            form {
-                transform: scale(1.8);
-                bottom: 50%;
-            }
-        }
+        main {form {transform: scale(1.8);}}
     }
 }
 

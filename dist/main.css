@@ -94,7 +94,6 @@ body {
 @media (min-height: 1024px) {
   .container main form {
     transform: scale(1.8);
-    bottom: 50%;
   }
 }
 @media (max-width: 800px) {
@@ -199,11 +198,85 @@ body {
   margin-bottom: 20px;
   cursor: pointer;
 }
+.container main .gameboard .ship-image {
+  position: absolute;
+  border: none;
+  z-index: -1;
+  filter: invert(69%) sepia(94%) saturate(884%) hue-rotate(172deg) brightness(100%) contrast(94%);
+}
+.container main .gameboard .carrier-x,
+.container main .gameboard .carrier-y {
+  width: 250px;
+  transform: scale(0.9);
+}
+.container main .gameboard .battleship-x,
+.container main .gameboard .battleship-y {
+  width: 200px;
+  width: 200px;
+}
+.container main .gameboard .destroyer-x,
+.container main .gameboard .destroyer-y {
+  width: 145px;
+  height: 100px;
+}
+.container main .gameboard .submarine-x,
+.container main .gameboard .submarine-y {
+  width: 180px;
+}
+.container main .gameboard .patrol-x,
+.container main .gameboard .patrol-y {
+  width: 100px;
+  height: 50px;
+}
+.container main .gameboard .carrier-y,
+.container main .gameboard .battleship-y,
+.container main .gameboard .submarine-y,
+.container main .gameboard .destroyer-y {
+  transform: rotate(90deg);
+}
+.container main .gameboard .carrier-x {
+  left: 0;
+  bottom: -5px;
+}
+.container main .gameboard .battleship-x {
+  left: 0;
+  top: -80px;
+}
+.container main .gameboard .submarine-x {
+  left: -20px;
+}
+.container main .gameboard .destroyer-x {
+  left: 0;
+  bottom: -25px;
+}
+.container main .gameboard .patrol-x {
+  left: 0;
+  bottom: 1px;
+  transform: scaleX(-1);
+}
+.container main .gameboard .carrier-y {
+  left: -90px;
+  top: 85px;
+}
+.container main .gameboard .battleship-y {
+  left: -100px;
+  top: -20px;
+}
+.container main .gameboard .submarine-y {
+  left: -70px;
+  top: 40px;
+}
+.container main .gameboard .destroyer-y {
+  left: -48px;
+  top: 25px;
+}
+.container main .gameboard .patrol-y {
+  left: -25px;
+  top: 20px;
+  transform: scaleY(-1) rotate(90deg);
+}
 .container main .gameboard * {
   border: 1px solid white;
-}
-.container main .gameboard *:hover {
-  background-color: lightgray;
 }
 
 @media (max-width: 540px) {
@@ -219,23 +292,73 @@ body {
     width: 300px;
     height: 300px;
   }
+  .container main .gameboard .carrier-x {
+    left: -50px;
+    top: -35px;
+    transform: scale(0.55);
+  }
+  .container main .gameboard .carrier-y {
+    transform: rotate(90deg) scale(0.55);
+    left: -105px;
+    top: 35px;
+  }
+  .container main .gameboard .battleship-x,
+.container main .gameboard .submarine-x,
+.container main .gameboard .destroyer-x {
+    transform: scale(0.62);
+  }
+  .container main .gameboard .battleship-y,
+.container main .gameboard .destroyer-y,
+.container main .gameboard .submarine-y {
+    transform: rotate(90deg) scale(0.62);
+  }
+  .container main .gameboard .battleship-x {
+    top: -100px;
+    left: -40px;
+  }
+  .container main .gameboard .battleship-y {
+    top: -65px;
+  }
+  .container main .gameboard .destroyer-x {
+    bottom: -35px;
+    left: -30px;
+  }
+  .container main .gameboard .destroyer-y {
+    left: -56px;
+    top: -6px;
+  }
+  .container main .gameboard .submarine-x {
+    bottom: -20px;
+    left: -50px;
+  }
+  .container main .gameboard .submarine-y {
+    left: -80px;
+    top: 10px;
+  }
+  .container main .gameboard .patrol-x {
+    transform: scaleX(-1) scale(0.62);
+    top: -14px;
+    left: -25px;
+  }
+  .container main .gameboard .patrol-y {
+    transform: scaleY(-1) rotate(90deg) scale(0.62);
+    left: -35px;
+    top: 3px;
+  }
   .container main p {
     font-size: 25px;
   }
 }
-@media (max-width: 321px) {
-  .container main .gameboard {
-    width: 280px;
-    height: 280px;
-  }
-}
 @media (max-width: 290px) {
   .container main .sound-icon-game {
-    right: 0;
+    right: 8px;
+  }
+  .container main .bttn-orientation {
+    font-size: 18px;
   }
   .container main .gameboard {
-    width: 250px;
-    height: 250px;
+    width: 270px;
+    height: 270px;
   }
 }
 .container .game-console {

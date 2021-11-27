@@ -1,11 +1,11 @@
-import {Ship} from '../src/ShipLibrary';
-import { GameBoard } from '../src/GameBoardLibrary';
+import Ship from '../src/ShipLibrary';
+import GameBoard from '../src/GameBoardLibrary';
 import {Player, Computer} from '../src/PlayerLibrary.js'
 // testing ship 'Hit' function
 
 describe('test ship library', () => {
-    const ship1 = Ship(0, 5, 'y');
-    const ship2 = Ship(3, 2, 'x');
+    const ship1 = Ship(0, 'carrier');
+    const ship2 = Ship(6, 'patrol boat');
     
     test('ship constructor', () => {
       expect(ship1.shipLength).toBe(5);
@@ -21,22 +21,21 @@ describe('test ship library', () => {
       expect(ship1.shipRep).toEqual(['hit', 'hit', 2, 'hit', 4]);
       expect(ship1.isSunk()).toBe(false);
 
-      ship2.hit(3);
-      ship2.hit(4);
+      ship2.hit(6);
+      ship2.hit(7);
       expect(ship2.isSunk()).toBe(true);
     });
 });
 
 describe('test gameboard library', () => {
-
   const gameBoard = GameBoard();
   test('placeShip method', () => {
     gameBoard.changeOrientation();
-    gameBoard.placeShip(1, 5);
-    gameBoard.placeShip(16, 4);
+    gameBoard.placeShip(1, 'carrier');
+    gameBoard.placeShip(16, 'battleship');
     gameBoard.changeOrientation()
-    gameBoard.placeShip(3, 2);
-    gameBoard.placeShip(74, 3);
+    gameBoard.placeShip(3, 'patrol boat');
+    gameBoard.placeShip(74, 'destroyer');
     expect(gameBoard.gameState).toEqual([
       ['o', null, 'o', 'o', null, null, null, null, null, null],
       ['o', null, null, null, null, 'o', null, null, null, null],
@@ -49,7 +48,7 @@ describe('test gameboard library', () => {
       [null, null, null, null, null, null, null, null, null, null],
       [null, null, null, null, null, null, null, null, null, null],
     ]);
-    gameBoard.placeShip(98, 4);
+    gameBoard.placeShip(98, 'battleship');
     expect(gameBoard.gameState).toEqual([
       ['o', null, 'o', 'o', null, null, null, null, null, null],
       ['o', null, null, null, null, 'o', null, null, null, null],
@@ -63,10 +62,10 @@ describe('test gameboard library', () => {
       [null, null, null, null, null, null, null, null, null, null],
     ]);
     gameBoard.changeOrientation();
-    gameBoard.placeShip(2, 5);
-    gameBoard.placeShip(17, 4);
+    gameBoard.placeShip(2, 'carrier');
+    gameBoard.placeShip(17, 'battleship');
     gameBoard.changeOrientation();
-    gameBoard.placeShip(77, 3);
+    gameBoard.placeShip(77, 'submarine');
     expect(gameBoard.gameState).toEqual([
       ['o', null, 'o', 'o', null, null, null, null, null, null],
       ['o', null, null, null, null, 'o', null, null, null, null],
@@ -119,16 +118,15 @@ describe('test gameboard library', () => {
 
 describe('Player Library', () => {
   const userBoard = GameBoard();
-  const compBoard = GameBoard();
   const user = Player(userBoard);
-  const comp = Computer(compBoard, user);
   test('placeGamePiece and rotateShip methods', () => {
     user.rotateShip();
-    user.placeGamePiece(1, 5);
-    user.placeGamePiece(16, 4);
+    user.placeGamePiece(1);
+    user.placeGamePiece(16);
     user.rotateShip();
-    user.placeGamePiece(3, 2);
-    user.placeGamePiece(74, 3);
+    user.placeGamePiece(74);
+    user.placeGamePiece(93);
+    user.placeGamePiece(3);
     expect(userBoard.gameState).toEqual([
       ['o', null, 'o', 'o', null, null, null, null, null, null],
       ['o', null, null, null, null, 'o', null, null, null, null],
@@ -139,7 +137,7 @@ describe('Player Library', () => {
       [null, null, null, null, null, null, null, null, null, null],
       [null, null, null, 'o', 'o', 'o', null, null, null, null],
       [null, null, null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, 'o', 'o', 'o', null, null, null, null, null],
     ]);
   });
 })

@@ -42,10 +42,84 @@
             height: 500px; 
             margin-bottom: 20px;
             cursor: $cursor-status;
-            * {
-                border: 1px solid white;
-                &:hover {background-color: lightgray;}
+            
+            .ship-image {
+                @include formatShip;
             }
+            
+            .carrier-x,
+            .carrier-y {
+                width: 250px;
+                transform: scale(0.9);
+            }
+            .battleship-x,
+            .battleship-y {
+                width: 200px;
+                width: 200px;
+            }
+            .destroyer-x,
+            .destroyer-y {
+                width: 145px;
+                height: 100px;
+            }
+            .submarine-x,
+            .submarine-y {
+                width: 180px;
+            }
+            .patrol-x,
+            .patrol-y {
+                width: 100px;
+                height: 50px;
+            }
+            .carrier-y,
+            .battleship-y,
+            .submarine-y,
+            .destroyer-y {
+                transform: rotate(90deg);
+            }
+
+            .carrier-x {
+                left: 0;
+                bottom: -5px;
+            }
+            .battleship-x {
+                left: 0;
+                top: -80px;
+            }
+            .submarine-x {
+                left: -20px;
+            }
+            .destroyer-x {
+                left: 0;
+                bottom: -25px;
+            }
+            .patrol-x {
+                left: 0;
+                bottom: 1px;
+                transform: scaleX(-1);
+            }
+            .carrier-y {
+                left: -90px;
+                top: 85px;
+            }
+            .battleship-y {
+                left: -100px;
+                top: -20px;
+            }
+            .submarine-y {
+                left: -70px;
+                top: 40px;
+            }
+            .destroyer-y {
+                left: -48px;
+                top: 25px;
+            }
+            .patrol-y {
+                left: -25px;
+                top: 20px;
+                transform: scaleY(-1) rotate(90deg);
+            }
+            * {border: 1px solid white;}
         }
     }
 }
@@ -62,19 +136,62 @@
             .gameboard {
                 width: 300px;
                 height: 300px;
+                .carrier-x {
+                    left: -50px;
+                    top: -35px;
+                    transform: scale(0.55);
+                }
+                .carrier-y {
+                    transform: rotate(90deg) scale(0.55);
+                    left: -105px;
+                    top: 35px;
+                }
+                .battleship-x,
+                .submarine-x,
+                .destroyer-x {
+                    transform: scale(0.62);
+                }
+                .battleship-y,
+                .destroyer-y,
+                .submarine-y {
+                    transform: rotate(90deg) scale(0.62);
+                }
+                .battleship-x {
+                    top: -100px;
+                    left: -40px;
+                }
+                .battleship-y {
+                    top: -65px;
+                }
+                .destroyer-x {
+                    bottom: -35px;
+                    left: -30px;
+                }
+                .destroyer-y {
+                    left: -56px;
+                    top: -6px;
+                }
+                .submarine-x {
+                    bottom: -20px;
+                    left: -50px;
+                }
+                .submarine-y {
+                    left: -80px;
+                    top: 10px;
+                }
+                .patrol-x {
+                    transform: scaleX(-1) scale(0.62);
+                    top: -14px;
+                    left: -25px;
+                }
+                .patrol-y {
+                    transform: scaleY(-1) rotate(90deg) scale(0.62);
+                    left: -35px;
+                    top: 3px;
+                    
+                }
             }
             p {font-size: 25px;}
-        }
-    }
-}
-
-@media (max-width: 321px) {
-    .container {
-        main {
-            .gameboard {
-                width: 280px;
-                height: 280px;
-            }
         }
     }
 }
@@ -82,10 +199,11 @@
 @media (max-width: 290px) {
     .container {
         main {
-            .sound-icon-game {right: 0;}
+            .sound-icon-game {right: 8px;}
+            .bttn-orientation {font-size: 18px;}
             .gameboard {
-                width: 250px;
-                height: 250px;
+                width: 270px;
+                height: 270px;
             }
         }
     }

@@ -1,7 +1,9 @@
-import { GameBoard } from '.';
+import getShipLength from "./utilities";
 
 const Player = (userBoard) => {
-  const attack = (dataID) => {
+  const availableShips = ['patrol boat','submarine','destroyer','battleship','carrier'];
+  
+  const attack = (dataID, compBoard) => {
     compBoard.recieveAttack(dataID);
   };
 
@@ -9,8 +11,9 @@ const Player = (userBoard) => {
     userBoard.changeOrientation();
   };
 
-  const placeGamePiece = (dataID, length) => {
-    userBoard.placeShip(dataID, length);
+  const placeGamePiece = (dataID) => {
+    const shipName = availableShips.pop();
+    userBoard.placeShip(dataID, shipName);
   };
 
   const queryHit = (dataID) => {
@@ -35,6 +38,7 @@ const Player = (userBoard) => {
     placeGamePiece,
     queryHit,
     querySink,
+    availableShips
   };
 };
 
@@ -107,7 +111,7 @@ const Computer = (compBoard, user) => {
       return dataID;
   };
 
-  const attack = () => {
+  const attack = (userBoard) => {
     const dataID = chooseMove();
     userBoard.recieveAttack(dataID);
     const hit = user.queryHit(dataID);
@@ -131,12 +135,13 @@ const Computer = (compBoard, user) => {
   };
 
   const placeGamePieces = () => {
-    const shipLengths = [5, 4, 3, 3, 2];
-    while (shipLengths.length > 0) {
+    const ships= ['patrol boat', 'submarine', 'destroyer', 'battleship', 'carrier'];
+    while (ships.length > 0) {
       const randDataID = Math.floor(Math.random() * 100) + 1;
+      const originCoordinates = compBoard.convertToCoordinates(randDataID);
       rotateShip();
-      if (compBoard.placeShip(randDataID, shipLengths[shipLengths.length - 1]) === true) {
-        shipLengths.pop();
+      if (compBoard.validateInput(originCoordinates, getShipLength(ships[ships.length-1]))) {
+          compBoard.placeShip(randDataID, ships.pop());
       }
     }
   };
@@ -149,5 +154,4 @@ const Computer = (compBoard, user) => {
 };
 
 export { Player, Computer };
-
 

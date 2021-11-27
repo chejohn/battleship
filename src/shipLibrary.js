@@ -1,3 +1,5 @@
+import getShipLength from "./utilities";
+
 const ShipProto =  {
     hit(number) {
         const shipRepArr = this.shipRep;
@@ -16,8 +18,9 @@ const ShipProto =  {
     }
 }
 
-const Ship = (originInt, length) => {
-    const shipLength = length;
+const Ship = (originInt, name) => {
+    const shipLength = getShipLength(name);
+    const shipName = name;
     const shipRep = [];
     for (let i = 0; i < shipLength; i++) {
         shipRep.push(originInt);
@@ -25,8 +28,9 @@ const Ship = (originInt, length) => {
     }
     return Object.create(ShipProto, {
         shipLength: {value: shipLength},
-        shipRep: {value: shipRep}
+        shipRep: {value: shipRep},
+        shipName: {value: shipName}
     });
 }
 
-export {Ship};
+export default Ship;

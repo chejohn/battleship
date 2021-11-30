@@ -14,7 +14,7 @@ $shipPosition: absolute;
     width: 30px;
     opacity: 0.9;
     transition: opacity 0.2s;
-    cursor: pointer;
+    cursor: $cursor-status;
     &:hover {opacity: 1;}
     position: absolute;
 }
@@ -57,5 +57,5 @@ $shipPosition: absolute;
     padding: 15px;
     border-radius: 5px;
     &:hover {opacity: 0.9;}
-    cursor: pointer;
+    cursor: $cursor-status;
 }

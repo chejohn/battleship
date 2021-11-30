@@ -1,4 +1,4 @@
-import getShipLength from "./utilities";
+import {getShipLength} from "./utilities";
 
 const Player = (userBoard) => {
   const availableShips = ['patrol boat','submarine','destroyer','battleship','carrier'];

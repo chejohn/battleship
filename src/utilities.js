@@ -18,4 +18,19 @@ const getShipLength = (shipName) => {
   return shipLength;
 };
 
-export default getShipLength;
+const createGameBoardGUI = (playerKind) => {
+  const gameBoard = document.createElement('div');
+  gameBoard.classList.add('gameboard');
+  gameBoard.classList.add(`${playerKind}-board`);
+  for (let i = 1; i <= 100; i++) {
+    const cell = document.createElement('div');
+    cell.setAttribute('data-id', `${i}`);
+    gameBoard.appendChild(cell);
+  }
+  return gameBoard;
+}
+
+export {
+  getShipLength,
+  createGameBoardGUI
+};

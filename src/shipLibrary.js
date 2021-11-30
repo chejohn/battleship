@@ -1,4 +1,4 @@
-import getShipLength from "./utilities";
+import {getShipLength} from "./utilities";
 
 const ShipProto =  {
     hit(number) {

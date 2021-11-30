@@ -474,7 +474,7 @@ const Computer = (compBoard, user) => {
       const randDataID = Math.floor(Math.random() * 100) + 1;
       const originCoordinates = compBoard.convertToCoordinates(randDataID);
       rotateShip();
-      if (compBoard.validateInput(originCoordinates, (0,_utilities__WEBPACK_IMPORTED_MODULE_0__["default"])(ships[ships.length-1]))) {
+      if (compBoard.validateInput(originCoordinates, (0,_utilities__WEBPACK_IMPORTED_MODULE_0__.getShipLength)(ships[ships.length-1]))) {
           compBoard.placeShip(randDataID, ships.pop());
       }
     }
@@ -525,7 +525,7 @@ const ShipProto =  {
 }
 
 const Ship = (originInt, name) => {
-    const shipLength = (0,_utilities__WEBPACK_IMPORTED_MODULE_0__["default"])(name);
+    const shipLength = (0,_utilities__WEBPACK_IMPORTED_MODULE_0__.getShipLength)(name);
     const shipName = name;
     const shipRep = [];
     for (let i = 0; i < shipLength; i++) {
@@ -593,7 +593,7 @@ const placeShipStage = (user, userBoard) => {
     const availableShips = user.availableShips;
     const axisPosition = userBoard.returnCurrentAxis();
     let cell = e.target;
-    const currShipLength = (0,_utilities__WEBPACK_IMPORTED_MODULE_0__["default"])(
+    const currShipLength = (0,_utilities__WEBPACK_IMPORTED_MODULE_0__.getShipLength)(
       availableShips[availableShips.length - 1]
     );
     const originCoordinates = userBoard.convertToCoordinates(
@@ -636,7 +636,7 @@ const placeShipStage = (user, userBoard) => {
       const dataID = Number(originCell.getAttribute('data-id'));
       const originCoordinates = userBoard.convertToCoordinates(dataID);
       const currentShip = user.availableShips[user.availableShips.length - 1];
-      const shipLength = (0,_utilities__WEBPACK_IMPORTED_MODULE_0__["default"])(currentShip);
+      const shipLength = (0,_utilities__WEBPACK_IMPORTED_MODULE_0__.getShipLength)(currentShip);
 
       if (userBoard.validateInput(originCoordinates, shipLength) === true) {
         user.placeGamePiece(dataID);
@@ -667,8 +667,8 @@ const placeShipStage = (user, userBoard) => {
 
   const GlobalNodes = (() => {
     const axisBttn = document.querySelector('.bttn-orientation');
-    const gameBoardCells = document.querySelectorAll('.player-gameboard > *');
-    const gameBoard = document.querySelector('.player-gameboard');
+    const gameBoardCells = document.querySelectorAll('.user-gameboard > *');
+    const gameBoard = document.querySelector('.user-gameboard');
     const gameMessage = document.querySelector('.placeShip-message');
     return {
       axisBttn,
@@ -706,7 +706,8 @@ const placeShipStage = (user, userBoard) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "getShipLength": () => (/* binding */ getShipLength),
+/* harmony export */   "createGameBoardGUI": () => (/* binding */ createGameBoardGUI)
 /* harmony export */ });
 const getShipLength = (shipName) => {
   let shipLength;
@@ -728,7 +729,19 @@ const getShipLength = (shipName) => {
   return shipLength;
 };
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (getShipLength);
+const createGameBoardGUI = (playerKind) => {
+  const gameBoard = document.createElement('div');
+  gameBoard.classList.add('gameboard');
+  gameBoard.classList.add(`${playerKind}-board`);
+  for (let i = 1; i <= 100; i++) {
+    const cell = document.createElement('div');
+    cell.setAttribute('data-id', `${i}`);
+    gameBoard.appendChild(cell);
+  }
+  return gameBoard;
+}
+
+
 
 /***/ })
 
@@ -840,6 +853,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _PlayerLibrary__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./PlayerLibrary */ "./src/PlayerLibrary.js");
 /* harmony import */ var _GameBoardLibrary__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./GameBoardLibrary */ "./src/GameBoardLibrary.js");
 /* harmony import */ var _placeShipStage__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./placeShipStage */ "./src/placeShipStage.js");
+/* harmony import */ var _utilities__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./utilities */ "./src/utilities.js");
 
 
 
@@ -854,23 +868,30 @@ __webpack_require__.r(__webpack_exports__);
 
  
 
+
 const userBoard = (0,_GameBoardLibrary__WEBPACK_IMPORTED_MODULE_11__["default"])();
 const user = (0,_PlayerLibrary__WEBPACK_IMPORTED_MODULE_10__.Player)(userBoard);
+const compBoard = (0,_GameBoardLibrary__WEBPACK_IMPORTED_MODULE_11__["default"])();
+const comp = (0,_PlayerLibrary__WEBPACK_IMPORTED_MODULE_10__.Computer)(compBoard, user);
 
 /*
-    params: hoverEffect and placeShipGUI event listeners
+    params: hoverEffect and placeShipGUI event handlers
     return: void
     task: remove placeShipStage event listeners; 
 */
 const transitionToGamePlay = (hoverEffect, placeShipGUI) => {
     const GlobalNodes = (() => {
-        const userBoardGUI = document.querySelector('.player-gameboard');
-        const gameBoardCells = document.querySelectorAll('.player-gameboard > *');
+        const userBoardGUI = document.querySelector('.user-gameboard');
+        const gameBoardCells = document.querySelectorAll('.user-gameboard > *');
         const axisBttn = document.querySelector('.bttn-orientation');
+        const main = document.querySelector('main');
+        const compBoardGUI = (0,_utilities__WEBPACK_IMPORTED_MODULE_13__.createGameBoardGUI)('comp');
         return {
             userBoardGUI,
             gameBoardCells,
-            axisBttn
+            axisBttn,
+            main,
+            compBoardGUI
         }
     })();
     const removeEventHandlers = (() => {
@@ -880,8 +901,45 @@ const transitionToGamePlay = (hoverEffect, placeShipGUI) => {
         });
         GlobalNodes.userBoardGUI.removeEventListener('click', placeShipGUI);
     })();
+    const insertGameConsole = () => {
+      const console = document.createElement('div');
+      console.className = 'game-console';
+      console.textContent = 'Awaiting Orders, Admiral Ché';
+      GlobalNodes.main.appendChild(console);
+    };
+    const createContainer = (className) => {
+        const container = document.createElement('div');
+        container.className = className;
+        return container;
+    }
+    const prepareThirdModule = (() => {
+        const userBoard = GlobalNodes.userBoardGUI;
+        document.querySelector('.placeShip-message').remove();
+        document.querySelector('.bttn-orientation').remove();
+        userBoard.remove();
+        insertGameConsole();
+
+        const gbContainer = createContainer('gameBoard-container');
+        GlobalNodes.main.appendChild(gbContainer);
+
+        const gbSubContainer = createContainer('gb-subcontainer');
+        const gbSubContainer2 = createContainer('gb-subcontainer');
+        gbContainer.appendChild(gbSubContainer);
+        gbContainer.appendChild(gbSubContainer2);
+
+        const gbHeader = document.createElement('p');
+        gbHeader.textContent = 'Friendly waters';
+        gbSubContainer.appendChild(gbHeader);
+        gbSubContainer.appendChild(userBoard);
+
+        const gbHeader2 = document.createElement('p');
+        gbHeader2.textContent = 'Enemy waters';
+        gbSubContainer2.appendChild(gbHeader2);
+        gbSubContainer2.appendChild(GlobalNodes.compBoardGUI);
+    })();
     const styleBoards = (() => {
         GlobalNodes.userBoardGUI.style.cursor = 'default';
+        GlobalNodes.compBoardGUI.style.cursor = 'crosshair';
     })();
 }
 

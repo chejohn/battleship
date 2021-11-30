@@ -1,4 +1,4 @@
-import getShipLength from './utilities';
+import {getShipLength} from './utilities';
 /*
   params: user obj, userBoard obj
   returns: an array of userBoardGUI event listeners
@@ -110,8 +110,8 @@ const placeShipStage = (user, userBoard) => {
 
   const GlobalNodes = (() => {
     const axisBttn = document.querySelector('.bttn-orientation');
-    const gameBoardCells = document.querySelectorAll('.player-gameboard > *');
-    const gameBoard = document.querySelector('.player-gameboard');
+    const gameBoardCells = document.querySelectorAll('.user-gameboard > *');
+    const gameBoard = document.querySelector('.user-gameboard');
     const gameMessage = document.querySelector('.placeShip-message');
     return {
       axisBttn,

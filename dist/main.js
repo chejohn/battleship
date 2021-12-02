@@ -86,6 +86,20 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./src/assets/shot-marker.svg":
+/*!************************************!*\
+  !*** ./src/assets/shot-marker.svg ***!
+  \************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (__webpack_require__.p + "assets/shot-marker.svg");
+
+/***/ }),
+
 /***/ "./src/assets/soundOff.png":
 /*!*********************************!*\
   !*** ./src/assets/soundOff.png ***!
@@ -167,6 +181,12 @@ const GameBoardProto = {
       row = Math.floor(dataID / 10);
     }
     return [row, col];
+  },
+
+  convertToDataID(coordinates) {
+    const [row, col] = coordinates;
+    const dataID = (row * 10 + 1) + col;
+    return `${dataID}`;
   },
   
   cacheShipData(newShip, shipOrientation, originCoordinates) {
@@ -378,6 +398,7 @@ const Player = (userBoard) => {
 
 const Computer = (compBoard, user) => {
   const availableMoves = [];
+  let lastHitArea;
   for (let i = 1; i <= 100; i++) {
     availableMoves.push(i);
   }
@@ -448,6 +469,7 @@ const Computer = (compBoard, user) => {
   const attack = (userBoard) => {
     const dataID = chooseMove();
     userBoard.recieveAttack(dataID);
+    lastHitArea = dataID;
     const hit = user.queryHit(dataID);
     if (hit) {
         const sunk = user.querySink(dataID);
@@ -480,10 +502,27 @@ const Computer = (compBoard, user) => {
     }
   };
 
+  const querySink = (dataID) => {
+    const attackCoordinates = compBoard.convertToCoordinates(dataID);
+    for (let shipData of compBoard.cachedShips) {
+      for (let coordinates of shipData.cachedCoordinates) {
+        if (JSON.stringify(attackCoordinates) === JSON.stringify(coordinates)) {
+          return shipData.ship.isSunk();
+        }
+      }
+    }
+  }
+
+  const getLastHitArea = () => {
+    return lastHitArea;
+  }
+
   return {
     attack,
     rotateShip,
     placeGamePieces,
+    getLastHitArea,
+    querySink
   };
 };
 
@@ -561,17 +600,6 @@ __webpack_require__.r(__webpack_exports__);
   returns: an array of userBoardGUI event listeners
 */
 const placeShipStage = (user, userBoard) => {
-  const formatImageElement = (imageElement, axisPosition, currentShip) => {
-    if (currentShip === 'patrol boat') {
-      imageElement.src = './assets/patrol.svg';
-      imageElement.className = `patrol-${axisPosition}`;
-    } else {
-      imageElement.src = `./assets/${currentShip}.svg`;
-      imageElement.className = `${currentShip}-${axisPosition}`;
-    }
-    imageElement.classList.add('ship-image');
-  };
-
   const alterGameMessage = (availableShips) => {
     if (availableShips.length > 0) {
       const gameMessage = GlobalNodes.gameMessage.textContent;
@@ -644,7 +672,7 @@ const placeShipStage = (user, userBoard) => {
         const axisPosition = userBoard.returnCurrentAxis();
         const imageElement = document.createElement('img');
         imageElement.alt = '';
-        formatImageElement(imageElement, axisPosition, currentShip);
+        (0,_utilities__WEBPACK_IMPORTED_MODULE_0__.formatImageElement)(imageElement, axisPosition, currentShip);
         let cell = originCell;
         if (axisPosition === 'x') {
           for (let i = 0; i < shipLength; i++) {
@@ -698,6 +726,94 @@ const placeShipStage = (user, userBoard) => {
 
 /***/ }),
 
+/***/ "./src/transitionToGamePlayLib.js":
+/*!****************************************!*\
+  !*** ./src/transitionToGamePlayLib.js ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _utilities__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utilities */ "./src/utilities.js");
+
+/*
+    params: hoverEffect and placeShipGUI event handlers
+    return: void
+    task: remove placeShipStage event listeners; 
+*/
+const transitionToGamePlay = (hoverEffect, placeShipGUI) => {
+    const GlobalNodes = (() => {
+        const userBoardGUI = document.querySelector('.user-gameboard');
+        const gameBoardCells = document.querySelectorAll('.user-gameboard > *');
+        const axisBttn = document.querySelector('.bttn-orientation');
+        const main = document.querySelector('main');
+        const compBoardGUI = (0,_utilities__WEBPACK_IMPORTED_MODULE_0__.createGameBoardGUI)('comp');
+        return {
+            userBoardGUI,
+            gameBoardCells,
+            axisBttn,
+            main,
+            compBoardGUI
+        }
+    })();
+    const removeEventHandlers = (() => {
+        GlobalNodes.gameBoardCells.forEach((cell) => {
+            cell.removeEventListener('mouseover', hoverEffect);
+            cell.removeEventListener('moseout', hoverEffect);
+        });
+        GlobalNodes.userBoardGUI.removeEventListener('click', placeShipGUI);
+    })();
+    const insertGameConsole = () => {
+      const console = document.createElement('div');
+      console.className = 'game-console';
+      const consoleText = document.createElement('p');
+      consoleText.textContent = 'Awaiting Orders, Admiral Ché';
+      console.appendChild(consoleText);
+      GlobalNodes.main.appendChild(console);
+    };
+    const createContainer = (className) => {
+        const container = document.createElement('div');
+        container.className = className;
+        return container;
+    }
+    const prepareThirdModule = (() => {
+        const userBoard = GlobalNodes.userBoardGUI;
+        document.querySelector('.placeShip-message').remove();
+        document.querySelector('.bttn-orientation').remove();
+        userBoard.remove();
+        insertGameConsole();
+
+        const gbContainer = createContainer('gameBoard-container');
+        GlobalNodes.main.appendChild(gbContainer);
+
+        const gbSubContainer = createContainer('gb-subcontainer');
+        const gbSubContainer2 = createContainer('gb-subcontainer');
+        gbContainer.appendChild(gbSubContainer);
+        gbContainer.appendChild(gbSubContainer2);
+
+        const gbHeader = document.createElement('p');
+        gbHeader.textContent = 'Friendly waters';
+        gbSubContainer.appendChild(gbHeader);
+        gbSubContainer.appendChild(userBoard);
+
+        const gbHeader2 = document.createElement('p');
+        gbHeader2.textContent = 'Enemy waters';
+        gbSubContainer2.appendChild(gbHeader2);
+        gbSubContainer2.appendChild(GlobalNodes.compBoardGUI);
+    })();
+    const styleBoards = (() => {
+        GlobalNodes.userBoardGUI.style.cursor = 'default';
+        GlobalNodes.compBoardGUI.style.cursor = 'crosshair';
+    })();
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (transitionToGamePlay);
+
+
+/***/ }),
+
 /***/ "./src/utilities.js":
 /*!**************************!*\
   !*** ./src/utilities.js ***!
@@ -707,7 +823,8 @@ const placeShipStage = (user, userBoard) => {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "getShipLength": () => (/* binding */ getShipLength),
-/* harmony export */   "createGameBoardGUI": () => (/* binding */ createGameBoardGUI)
+/* harmony export */   "createGameBoardGUI": () => (/* binding */ createGameBoardGUI),
+/* harmony export */   "formatImageElement": () => (/* binding */ formatImageElement)
 /* harmony export */ });
 const getShipLength = (shipName) => {
   let shipLength;
@@ -732,7 +849,7 @@ const getShipLength = (shipName) => {
 const createGameBoardGUI = (playerKind) => {
   const gameBoard = document.createElement('div');
   gameBoard.classList.add('gameboard');
-  gameBoard.classList.add(`${playerKind}-board`);
+  gameBoard.classList.add(`${playerKind}-gameboard`);
   for (let i = 1; i <= 100; i++) {
     const cell = document.createElement('div');
     cell.setAttribute('data-id', `${i}`);
@@ -740,6 +857,17 @@ const createGameBoardGUI = (playerKind) => {
   }
   return gameBoard;
 }
+
+const formatImageElement = (imageElement, axisPosition, currentShip) => {
+  if (currentShip === 'patrol boat') {
+    imageElement.src = './assets/patrol.svg';
+    imageElement.className = `patrol-${axisPosition}`;
+  } else {
+    imageElement.src = `./assets/${currentShip}.svg`;
+    imageElement.className = `${currentShip}-${axisPosition}`;
+  }
+  imageElement.classList.add('ship-image');
+};
 
 
 
@@ -850,10 +978,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _assets_patrol_svg__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./assets/patrol.svg */ "./src/assets/patrol.svg");
 /* harmony import */ var _assets_submarine_svg__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./assets/submarine.svg */ "./src/assets/submarine.svg");
 /* harmony import */ var _assets_carrier_svg__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./assets/carrier.svg */ "./src/assets/carrier.svg");
-/* harmony import */ var _PlayerLibrary__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./PlayerLibrary */ "./src/PlayerLibrary.js");
-/* harmony import */ var _GameBoardLibrary__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./GameBoardLibrary */ "./src/GameBoardLibrary.js");
-/* harmony import */ var _placeShipStage__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./placeShipStage */ "./src/placeShipStage.js");
-/* harmony import */ var _utilities__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./utilities */ "./src/utilities.js");
+/* harmony import */ var _assets_shot_marker_svg__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./assets/shot-marker.svg */ "./src/assets/shot-marker.svg");
+/* harmony import */ var _PlayerLibrary__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./PlayerLibrary */ "./src/PlayerLibrary.js");
+/* harmony import */ var _GameBoardLibrary__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./GameBoardLibrary */ "./src/GameBoardLibrary.js");
+/* harmony import */ var _placeShipStage__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./placeShipStage */ "./src/placeShipStage.js");
+/* harmony import */ var _transitionToGamePlayLib__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./transitionToGamePlayLib */ "./src/transitionToGamePlayLib.js");
+/* harmony import */ var _utilities__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./utilities */ "./src/utilities.js");
 
 
 
@@ -866,87 +996,130 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
- 
 
 
-const userBoard = (0,_GameBoardLibrary__WEBPACK_IMPORTED_MODULE_11__["default"])();
-const user = (0,_PlayerLibrary__WEBPACK_IMPORTED_MODULE_10__.Player)(userBoard);
-const compBoard = (0,_GameBoardLibrary__WEBPACK_IMPORTED_MODULE_11__["default"])();
-const comp = (0,_PlayerLibrary__WEBPACK_IMPORTED_MODULE_10__.Computer)(compBoard, user);
 
-/*
-    params: hoverEffect and placeShipGUI event handlers
-    return: void
-    task: remove placeShipStage event listeners; 
-*/
-const transitionToGamePlay = (hoverEffect, placeShipGUI) => {
-    const GlobalNodes = (() => {
-        const userBoardGUI = document.querySelector('.user-gameboard');
-        const gameBoardCells = document.querySelectorAll('.user-gameboard > *');
-        const axisBttn = document.querySelector('.bttn-orientation');
-        const main = document.querySelector('main');
-        const compBoardGUI = (0,_utilities__WEBPACK_IMPORTED_MODULE_13__.createGameBoardGUI)('comp');
-        return {
-            userBoardGUI,
-            gameBoardCells,
-            axisBttn,
-            main,
-            compBoardGUI
-        }
-    })();
-    const removeEventHandlers = (() => {
-        GlobalNodes.gameBoardCells.forEach((cell) => {
-            cell.removeEventListener('mouseover', hoverEffect);
-            cell.removeEventListener('moseout', hoverEffect);
-        });
-        GlobalNodes.userBoardGUI.removeEventListener('click', placeShipGUI);
-    })();
-    const insertGameConsole = () => {
-      const console = document.createElement('div');
-      console.className = 'game-console';
-      console.textContent = 'Awaiting Orders, Admiral Ché';
-      GlobalNodes.main.appendChild(console);
-    };
-    const createContainer = (className) => {
-        const container = document.createElement('div');
-        container.className = className;
-        return container;
-    }
-    const prepareThirdModule = (() => {
-        const userBoard = GlobalNodes.userBoardGUI;
-        document.querySelector('.placeShip-message').remove();
-        document.querySelector('.bttn-orientation').remove();
-        userBoard.remove();
-        insertGameConsole();
 
-        const gbContainer = createContainer('gameBoard-container');
-        GlobalNodes.main.appendChild(gbContainer);
 
-        const gbSubContainer = createContainer('gb-subcontainer');
-        const gbSubContainer2 = createContainer('gb-subcontainer');
-        gbContainer.appendChild(gbSubContainer);
-        gbContainer.appendChild(gbSubContainer2);
+const userBoard = (0,_GameBoardLibrary__WEBPACK_IMPORTED_MODULE_12__["default"])();
+const compBoard = (0,_GameBoardLibrary__WEBPACK_IMPORTED_MODULE_12__["default"])();
+const user = (0,_PlayerLibrary__WEBPACK_IMPORTED_MODULE_11__.Player)(userBoard);
+const comp = (0,_PlayerLibrary__WEBPACK_IMPORTED_MODULE_11__.Computer)(compBoard, user);
 
-        const gbHeader = document.createElement('p');
-        gbHeader.textContent = 'Friendly waters';
-        gbSubContainer.appendChild(gbHeader);
-        gbSubContainer.appendChild(userBoard);
-
-        const gbHeader2 = document.createElement('p');
-        gbHeader2.textContent = 'Enemy waters';
-        gbSubContainer2.appendChild(gbHeader2);
-        gbSubContainer2.appendChild(GlobalNodes.compBoardGUI);
-    })();
-    const styleBoards = (() => {
-        GlobalNodes.userBoardGUI.style.cursor = 'default';
-        GlobalNodes.compBoardGUI.style.cursor = 'crosshair';
-    })();
-}
-
-const [hoverEffect, placeShipGUI] = (0,_placeShipStage__WEBPACK_IMPORTED_MODULE_12__["default"])(user, userBoard);
+const [hoverEffect, placeShipGUI] = (0,_placeShipStage__WEBPACK_IMPORTED_MODULE_13__["default"])(user, userBoard);
 setTimeout(() => {
-    transitionToGamePlay(hoverEffect, placeShipGUI);
-}, 10000);
+    (0,_transitionToGamePlayLib__WEBPACK_IMPORTED_MODULE_14__["default"])(hoverEffect, placeShipGUI);
+    comp.placeGamePieces();
+},8000);
+
+const gamePlayModule = (user, comp, userBoard, compBoard) => {
+    const hoverEffect = (e) => {
+        if (e.target.hasAttribute('data-id')) {
+            const cell = e.target;
+            if (e.type === 'mouseover') {
+              const dataID = cell.getAttribute('data-id');
+              const [row, col] = compBoard.convertToCoordinates(dataID);
+              if (
+                compBoard.gameState[row][col] === 'x' ||
+                compBoard.gameState[row][col] === '*'
+              )
+                cell.style.background = 'rgba(255, 60, 60, 0.6)';
+              else cell.style.background = 'rgba(60, 255, 60, 0.6)';
+            } else if (e.type === 'mouseout')
+              cell.style.background = 'transparent';
+        }
+    };
+
+    const placeShotMarker = (dataID, playerKind) => {
+        let cell;
+        const [row, col] = userBoard.convertToCoordinates(dataID);
+        const shotMarker = document.createElement('img');
+        shotMarker.src = './assets/shot-marker.svg';
+        shotMarker.className = 'shot-marker';
+        if (playerKind === 'user') {
+            cell = document.querySelector(`.comp-gameboard > [data-id="${dataID}"]`);
+            if (compBoard.gameState[row][col] === 'x') {
+                shotMarker.style.filter = 'invert(99%) sepia(1%) saturate(0%) hue-rotate(4deg) brightness(104%) contrast(100%)';
+            } 
+            else if (compBoard.gameState[row][col] === '*') {
+                shotMarker.style.filter = 'invert(15%) sepia(87%) saturate(4317%) hue-rotate(357deg) brightness(97%) contrast(125%)';
+            }
+        } 
+        else {
+            cell = document.querySelector(`.user-gameboard > [data-id="${dataID}"]`);
+            if (userBoard.gameState[row][col] === 'x') {
+              shotMarker.style.filter =
+                'invert(99%) sepia(1%) saturate(0%) hue-rotate(4deg) brightness(104%) contrast(100%)';
+            } else if (userBoard.gameState[row][col] === '*') {
+              shotMarker.style.filter =
+                'invert(15%) sepia(87%) saturate(4317%) hue-rotate(357deg) brightness(97%) contrast(125%)';
+            }
+        }
+        cell.style.display = 'flex';
+        cell.style.justifyContent = 'center';
+        cell.style.alignItems = 'center';
+        cell.appendChild(shotMarker);
+    }
+
+    const displaySunkShip = (dataID) => {
+        const attackCoordinates = compBoard.convertToCoordinates(dataID);
+        for (let shipData of compBoard.cachedShips) {
+            for (let coordinates of shipData.cachedCoordinates) {
+                if (JSON.stringify(attackCoordinates) === JSON.stringify(coordinates)) {
+                    const originDataID = compBoard.convertToDataID(shipData.cachedCoordinates[0]);
+                    const originCell = document.querySelector(`.comp-gameboard > [data-id='${originDataID}']`);
+                    originCell.style.position = 'relative';
+                    let shipName = shipData.ship.shipName;
+                    const shipOrientation = shipData.shipOrientation;
+                    
+                    const shipImage = document.createElement('img');
+                    (0,_utilities__WEBPACK_IMPORTED_MODULE_15__.formatImageElement)(shipImage, shipOrientation, shipName);
+                    shipImage.style.filter = 'invert(75%) sepia(6%) saturate(181%) hue-rotate(344deg) brightness(90%) contrast(88%)';
+                    originCell.appendChild(shipImage);
+                }
+            }
+        }
+    }
+
+    const playRound = (e) => {
+        if (e.target.hasAttribute('data-id')) {
+            const cell = e.target;
+            const dataID = cell.getAttribute('data-id');
+            const [row, col] = userBoard.convertToCoordinates(dataID);
+            if (compBoard.gameState[row][col] === null || compBoard.gameState[row][col] === 'o') {
+                user.attack(dataID, compBoard);
+                placeShotMarker(dataID, 'user');
+                if (comp.querySink(dataID)) {
+                    displaySunkShip(dataID);
+                }
+                comp.attack(userBoard);
+                placeShotMarker(comp.getLastHitArea(), 'comp');
+            }
+        }
+    }
+
+    const GlobalNodes = (() => {
+      const compBoardGUI = document.querySelector('.comp-gameboard');
+      const compBoardCells = document.querySelectorAll('.comp-gameboard > *');
+      const userBoardGUI = document.querySelector('.user-gameboard');
+      return {
+          compBoardGUI,
+          userBoardGUI,
+          compBoardCells
+      }
+    })();
+    const attachEventHandlers = (() => {
+        GlobalNodes.compBoardCells.forEach(cell => {
+            cell.addEventListener('mouseover', hoverEffect);
+            cell.addEventListener('mouseout', hoverEffect);
+        });
+        GlobalNodes.compBoardGUI.addEventListener('click', playRound);
+    })();
+};
+
+setTimeout(() => {
+    gamePlayModule(user, comp, userBoard, compBoard);
+}, 9000);
 
 
 })();

@@ -351,7 +351,7 @@ body {
 }
 @media (max-width: 290px) {
   .container main .sound-icon-game {
-    right: 8px;
+    right: 2px;
   }
   .container main .bttn-orientation {
     font-size: 18px;
@@ -369,12 +369,18 @@ body {
   font-family: "Special Elite", cursive;
   border: 1px solid #dddddd;
   border-radius: 40px;
-  font-size: 1.4rem;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 0.5rem;
   margin-top: 1rem;
+}
+.container .game-console p {
+  overflow: hidden;
+  font-size: 1.4rem;
+  white-space: nowrap;
+  width: 0;
+  animation: typing 2s steps(60, end) forwards;
 }
 .container .gameBoard-container {
   display: flex;
@@ -390,6 +396,10 @@ body {
 .container .gameBoard-container .gb-subcontainer .gameboard {
   margin-bottom: 0;
 }
+.container .gameBoard-container .gb-subcontainer .gameboard .shot-marker {
+  width: 15px;
+  border: none;
+}
 
 @media (max-width: 1122px) {
   .container .gameBoard-container {
@@ -402,6 +412,14 @@ body {
 @media (max-width: 600px) {
   .container .game-console {
     font-size: 1rem;
+  }
+}
+@keyframes typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
   }
 }
 

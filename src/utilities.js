@@ -21,7 +21,7 @@ const getShipLength = (shipName) => {
 const createGameBoardGUI = (playerKind) => {
   const gameBoard = document.createElement('div');
   gameBoard.classList.add('gameboard');
-  gameBoard.classList.add(`${playerKind}-board`);
+  gameBoard.classList.add(`${playerKind}-gameboard`);
   for (let i = 1; i <= 100; i++) {
     const cell = document.createElement('div');
     cell.setAttribute('data-id', `${i}`);
@@ -30,7 +30,19 @@ const createGameBoardGUI = (playerKind) => {
   return gameBoard;
 }
 
+const formatImageElement = (imageElement, axisPosition, currentShip) => {
+  if (currentShip === 'patrol boat') {
+    imageElement.src = './assets/patrol.svg';
+    imageElement.className = `patrol-${axisPosition}`;
+  } else {
+    imageElement.src = `./assets/${currentShip}.svg`;
+    imageElement.className = `${currentShip}-${axisPosition}`;
+  }
+  imageElement.classList.add('ship-image');
+};
+
 export {
   getShipLength,
-  createGameBoardGUI
+  createGameBoardGUI,
+  formatImageElement
 };

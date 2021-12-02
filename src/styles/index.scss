@@ -11,12 +11,19 @@
         font-family: 'Special Elite', cursive;
         border: 1px solid rgb(221, 221, 221);
         border-radius: 40px;
-        font-size: 1.4rem;
         display: flex;
         justify-content: center;
         align-items: center;
         padding: 0.5rem;
         margin-top: 1rem;
+
+        p {
+            overflow: hidden;
+            font-size: 1.4rem;
+            white-space: nowrap;
+            width: 0;
+            animation: typing 1s steps(40, end) forwards;
+        }
     }
     .gameBoard-container {
         display: flex;
@@ -25,7 +32,13 @@
 
         .gb-subcontainer {
             p {margin-top: 0;}
-            .gameboard {margin-bottom: 0;}
+            .gameboard {
+                margin-bottom: 0;
+                .shot-marker {
+                    width: 15px;
+                    border: none;
+                }
+            }
             margin: 1rem 1.6rem 1.6rem 1.6rem;
         }
     }
@@ -46,3 +59,7 @@
     .container {.game-console {font-size: 1rem;}}
 }
 
+@keyframes typing {
+    from {width: 0;}
+    to {width: 100%;}
+}

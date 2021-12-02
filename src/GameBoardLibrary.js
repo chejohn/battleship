@@ -15,6 +15,12 @@ const GameBoardProto = {
     }
     return [row, col];
   },
+
+  convertToDataID(coordinates) {
+    const [row, col] = coordinates;
+    const dataID = (row * 10 + 1) + col;
+    return `${dataID}`;
+  },
   
   cacheShipData(newShip, shipOrientation, originCoordinates) {
     let [row, col] = originCoordinates;

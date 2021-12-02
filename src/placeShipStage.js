@@ -1,20 +1,12 @@
-import {getShipLength} from './utilities';
+import {
+  getShipLength,
+  formatImageElement
+} from './utilities';
 /*
   params: user obj, userBoard obj
   returns: an array of userBoardGUI event listeners
 */
 const placeShipStage = (user, userBoard) => {
-  const formatImageElement = (imageElement, axisPosition, currentShip) => {
-    if (currentShip === 'patrol boat') {
-      imageElement.src = './assets/patrol.svg';
-      imageElement.className = `patrol-${axisPosition}`;
-    } else {
-      imageElement.src = `./assets/${currentShip}.svg`;
-      imageElement.className = `${currentShip}-${axisPosition}`;
-    }
-    imageElement.classList.add('ship-image');
-  };
-
   const alterGameMessage = (availableShips) => {
     if (availableShips.length > 0) {
       const gameMessage = GlobalNodes.gameMessage.textContent;

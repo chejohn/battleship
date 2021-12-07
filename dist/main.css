@@ -31,6 +31,17 @@ body {
   align-items: center;
   justify-content: center;
 }
+.container main .generic-bttn {
+  margin-top: 25px;
+  border: none;
+  padding: 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.5rem;
+}
+.container main .generic-bttn:hover {
+  opacity: 0.9;
+}
 .container main .sound-icon {
   width: 30px;
   opacity: 0.9;
@@ -42,6 +53,9 @@ body {
 .container main .sound-icon:hover {
   opacity: 1;
 }
+.container main #sound-off {
+  filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(43deg) brightness(100%) contrast(104%);
+}
 .container main form {
   display: flex;
   flex-direction: column;
@@ -51,16 +65,6 @@ body {
 .container main form label {
   margin-bottom: 15px;
   color: white;
-}
-.container main form button {
-  margin-top: 30px;
-  border: none;
-  padding: 15px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-.container main form button:hover {
-  opacity: 0.9;
 }
 .container main form input {
   padding: 10px;
@@ -154,6 +158,9 @@ body {
   width: 280px;
   margin-top: 10px;
 }
+.container main .fade-out {
+  animation: fadeOut 1s ease-out forwards;
+}
 .container main p,
 .container main .bttn-orientation,
 .container main .gameboard {
@@ -181,7 +188,6 @@ body {
   opacity: 0.9;
   transition: opacity 0.2s;
   cursor: pointer;
-  position: absolute;
   position: absolute;
   top: 23px;
   right: 60px;
@@ -285,7 +291,7 @@ body {
   }
   .container main .sound-icon-game {
     width: 20px;
-    right: 25px;
+    right: 8%;
     top: 20px;
   }
   .container main .gameboard {
@@ -350,9 +356,6 @@ body {
   }
 }
 @media (max-width: 290px) {
-  .container main .sound-icon-game {
-    right: 2px;
-  }
   .container main .bttn-orientation {
     font-size: 18px;
   }
@@ -361,9 +364,17 @@ body {
     height: 270px;
   }
 }
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
 .container .game-console {
   width: 70%;
-  min-height: 55px;
+  height: 55px;
   background-image: linear-gradient(90deg, #373737 0%, #292929 29%, #292929 76%, #383838 100%);
   color: #DDDDDD;
   font-family: "Special Elite", cursive;
@@ -375,11 +386,12 @@ body {
   padding: 0.5rem;
   margin-top: 1rem;
 }
-.container .game-console p {
+.container .game-console .console-text {
   overflow: hidden;
   font-size: 1.4rem;
   white-space: nowrap;
   width: 0;
+  margin: 0;
   animation: typing 2s steps(60, end) forwards;
 }
 .container .gameBoard-container {
@@ -400,6 +412,11 @@ body {
   width: 15px;
   border: none;
 }
+.container .winning-message {
+  font-size: 5rem;
+  opacity: 0;
+  animation: endMessage 1.5s ease-in forwards;
+}
 
 @media (max-width: 1122px) {
   .container .gameBoard-container {
@@ -411,7 +428,17 @@ body {
 }
 @media (max-width: 600px) {
   .container .game-console {
-    font-size: 1rem;
+    width: 90%;
+  }
+  .container .game-console .console-text {
+    font-size: 0.8rem;
+    animation: typing 1.3s steps(60, end) forwards;
+  }
+  .container .gameBoard-container .gb-subcontainer .gameboard .shot-marker {
+    width: 10px;
+  }
+  .container .winning-message {
+    font-size: 3rem;
   }
 }
 @keyframes typing {
@@ -420,6 +447,14 @@ body {
   }
   to {
     width: 100%;
+  }
+}
+@keyframes endMessage {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 

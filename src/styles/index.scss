@@ -5,7 +5,7 @@
 .container {
     .game-console {
         width: 70%;
-        min-height: 55px;
+        height: 55px;
         background-image: linear-gradient(90deg, rgb(55, 55, 55) 0%, rgb(41, 41, 41) 29%, rgb(41, 41, 41) 76%, rgb(56, 56, 56) 100%);
         color: #DDDDDD;
         font-family: 'Special Elite', cursive;
@@ -17,12 +17,13 @@
         padding: 0.5rem;
         margin-top: 1rem;
 
-        p {
+        .console-text {
             overflow: hidden;
             font-size: 1.4rem;
             white-space: nowrap;
             width: 0;
-            animation: typing 1s steps(40, end) forwards;
+            margin: 0;
+            animation: typing 2s steps(60, end) forwards;
         }
     }
     .gameBoard-container {
@@ -42,6 +43,11 @@
             margin: 1rem 1.6rem 1.6rem 1.6rem;
         }
     }
+    .winning-message {
+        font-size: 5rem;
+        opacity: 0;
+        animation: endMessage 1.5s ease-in forwards;
+    }
 }
 
 @media (max-width: 1122px) {
@@ -56,10 +62,35 @@
 }
 
 @media (max-width: 600px) {
-    .container {.game-console {font-size: 1rem;}}
+    .container {
+        .game-console {
+            width: 90%;
+            .console-text {
+                font-size: 0.80rem;
+                 animation: typing 1.3s steps(60, end) forwards;
+            }
+        }
+        .gameBoard-container {
+            .gb-subcontainer {
+                .gameboard {
+                .shot-marker {
+                    width: 10px;
+                }
+            }
+            }
+        }
+        .winning-message {font-size: 3rem;}
+    }
+
 }
 
 @keyframes typing {
     from {width: 0;}
     to {width: 100%;}
 }
+
+@keyframes endMessage {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+

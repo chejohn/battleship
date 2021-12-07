@@ -1,6 +1,7 @@
 import {
   getShipLength,
-  formatImageElement
+  formatImageElement,
+  convertToCoordinates
 } from './utilities';
 /*
   params: user obj, userBoard obj
@@ -11,8 +12,7 @@ const placeShipStage = (user, userBoard) => {
     if (availableShips.length > 0) {
       const gameMessage = GlobalNodes.gameMessage.textContent;
       const currentShip = availableShips[availableShips.length - 1];
-      const userName = gameMessage.substr(0, gameMessage.indexOf(','));
-      GlobalNodes.gameMessage.textContent = `${userName}, place your ${currentShip}`;
+      GlobalNodes.gameMessage.textContent = `${user.userName}, place your ${currentShip}`;
     }
   };
 
@@ -31,7 +31,7 @@ const placeShipStage = (user, userBoard) => {
     const currShipLength = getShipLength(
       availableShips[availableShips.length - 1]
     );
-    const originCoordinates = userBoard.convertToCoordinates(
+    const originCoordinates = convertToCoordinates(
       Number(cell.getAttribute('data-id'))
     );
 
@@ -69,7 +69,7 @@ const placeShipStage = (user, userBoard) => {
     if (e.target.hasAttribute('data-id')) {
       const originCell = e.target;
       const dataID = Number(originCell.getAttribute('data-id'));
-      const originCoordinates = userBoard.convertToCoordinates(dataID);
+      const originCoordinates = convertToCoordinates(dataID);
       const currentShip = user.availableShips[user.availableShips.length - 1];
       const shipLength = getShipLength(currentShip);
 
@@ -121,7 +121,6 @@ const placeShipStage = (user, userBoard) => {
     });
     GlobalNodes.gameBoard.addEventListener('click', placeShipGUI);
   })();
-
   return [hoverEffect, placeShipGUI]
 }
 

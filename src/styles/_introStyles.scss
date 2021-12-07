@@ -22,11 +22,15 @@ body {
         }
     }
     main {
-       @include formatMain;
+        @include formatMain;
+        .generic-bttn {
+            @include formatButton
+        }
        .sound-icon {
            @include format-soundIcon;
            top: 170px;
        }
+       #sound-off {filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(43deg) brightness(100%) contrast(104%);}
        form {
            display: flex;
            flex-direction: column;
@@ -36,9 +40,6 @@ body {
            label {
             margin-bottom: 15px;
             color: white;
-           }
-           button {
-            @include formatButton
            }
            input {padding: 10px;}
        }

@@ -1,27 +1,12 @@
 import Ship from './ShipLibrary';
+import {
+  convertToCoordinates,
+} from './utilities';
+
 // ship is represented by an 'o' on the gameboard
 // misssed hits are represented by an 'x' on the gameboard
 // attacked ships are represented by an '*' on the gameboard
 const GameBoardProto = {
-  convertToCoordinates(dataID) {
-    let col;
-    let row;
-    if (dataID % 10 === 0) {
-      col = 9;
-      row = dataID / 10 - 1;
-    } else {
-      col = (dataID % 10) - 1;
-      row = Math.floor(dataID / 10);
-    }
-    return [row, col];
-  },
-
-  convertToDataID(coordinates) {
-    const [row, col] = coordinates;
-    const dataID = (row * 10 + 1) + col;
-    return `${dataID}`;
-  },
-  
   cacheShipData(newShip, shipOrientation, originCoordinates) {
     let [row, col] = originCoordinates;
     const cachedCoordinates = [];
@@ -84,7 +69,7 @@ const GameBoardProto = {
   },
 
   placeShip(dataID, shipName) {
-    const originCoordinates = this.convertToCoordinates(dataID);
+    const originCoordinates = convertToCoordinates(dataID);
     let [row, col] = originCoordinates;
     const shipOrientation = this.currentOrientation;
     let newShip;
@@ -101,24 +86,21 @@ const GameBoardProto = {
   },
 
   recieveAttack(dataID) {
-    const attackCoordinates = this.convertToCoordinates(dataID);
+    const attackCoordinates = convertToCoordinates(dataID);
     const [row, col] = attackCoordinates;
     if (this.gameState[row][col] === null) {
       this.gameState[row][col] = 'x';
     } else if (this.gameState[row][col] === 'o') {
       this.gameState[row][col] = '*';
-      let breakFromOuter = false;
       for (let shipData of this.cachedShips) {
         for (let xyPair of shipData.cachedCoordinates) {
           if (JSON.stringify(xyPair) === JSON.stringify(attackCoordinates)) {
             const ship = shipData.ship;
             if (shipData.shipOrientation === 'x') ship.hit(col);
             else ship.hit(row);
-            breakFromOuter = true;
-            break;
+            return;
           }
         }
-        if (breakFromOuter) break;
       }
     }
   },

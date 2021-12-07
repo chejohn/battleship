@@ -41,8 +41,40 @@ const formatImageElement = (imageElement, axisPosition, currentShip) => {
   imageElement.classList.add('ship-image');
 };
 
+const convertToCoordinates = (dataID) => {
+    let col;
+    let row;
+    if (dataID % 10 === 0) {
+      col = 9;
+      row = dataID / 10 - 1;
+    } else {
+      col = (dataID % 10) - 1;
+      row = Math.floor(dataID / 10);
+    }
+    return [row, col];
+}
+
+const convertToDataID = (coordinates) => {
+    const [row, col] = coordinates;
+    const dataID = (row * 10 + 1) + col;
+    return `${dataID}`;
+}
+
+const findShipData = (gameBoard, attackCoordinates) => {
+  for (let shipData of gameBoard.cachedShips) {
+    for (let coordinates of shipData.cachedCoordinates) {
+      if (JSON.stringify(attackCoordinates) === JSON.stringify(coordinates)) {
+        return shipData;
+      }
+    }
+  }
+};
+
 export {
   getShipLength,
   createGameBoardGUI,
-  formatImageElement
+  formatImageElement,
+  convertToCoordinates,
+  convertToDataID,
+  findShipData
 };

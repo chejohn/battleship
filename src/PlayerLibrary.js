@@ -1,6 +1,11 @@
-import {getShipLength} from "./utilities";
+import {
+  getShipLength,
+  convertToCoordinates,
+  findShipData
+} from "./utilities";
 
-const Player = (userBoard) => {
+const Player = (userBoard, name) => {
+  const userName = name;
   const availableShips = ['patrol boat','submarine','destroyer','battleship','carrier'];
   
   const attack = (dataID, compBoard) => {
@@ -17,20 +22,15 @@ const Player = (userBoard) => {
   };
 
   const queryHit = (dataID) => {
-    const [row, col] = userBoard.convertToCoordinates(dataID);
+    const [row, col] = convertToCoordinates(dataID);
     if (userBoard.gameState[row][col] === '*') return true;
     return false;
   };
 
   const querySink = (dataID) => {
-    const attackCoordinates = userBoard.convertToCoordinates(dataID);
-    for (let shipData of userBoard.cachedShips) {
-      for (let coordinates of shipData.cachedCoordinates) {
-        if (JSON.stringify(attackCoordinates) === JSON.stringify(coordinates)) {
-          return shipData.ship.isSunk();
-        }
-      }
-    }
+    const attackCoordinates = convertToCoordinates(dataID);
+    const shipData = findShipData(userBoard, attackCoordinates);
+    return shipData.ship.isSunk();
   };
   return {
     attack,
@@ -38,12 +38,14 @@ const Player = (userBoard) => {
     placeGamePiece,
     queryHit,
     querySink,
-    availableShips
+    availableShips,
+    userName
   };
 };
 
 const Computer = (compBoard, user) => {
   const availableMoves = [];
+  const userName = 'Comp';
   let lastHitArea;
   for (let i = 1; i <= 100; i++) {
     availableMoves.push(i);
@@ -58,7 +60,7 @@ const Computer = (compBoard, user) => {
   const validDataID = (hitArea, operand = 0) => {
     let aleredOperand;
     if (operand % 10 === 0 || operand % 10 === -0) aleredOperand = operand/10;
-    const [row, col] = compBoard.convertToCoordinates(hitArea);
+    const [row, col] = convertToCoordinates(hitArea);
   
     if (operand === 1 || operand === -1) {
         if (col + operand < 0 || col + operand > 9) return false;
@@ -140,7 +142,7 @@ const Computer = (compBoard, user) => {
     const ships= ['patrol boat', 'submarine', 'destroyer', 'battleship', 'carrier'];
     while (ships.length > 0) {
       const randDataID = Math.floor(Math.random() * 100) + 1;
-      const originCoordinates = compBoard.convertToCoordinates(randDataID);
+      const originCoordinates = convertToCoordinates(randDataID);
       rotateShip();
       if (compBoard.validateInput(originCoordinates, getShipLength(ships[ships.length-1]))) {
           compBoard.placeShip(randDataID, ships.pop());
@@ -149,14 +151,9 @@ const Computer = (compBoard, user) => {
   };
 
   const querySink = (dataID) => {
-    const attackCoordinates = compBoard.convertToCoordinates(dataID);
-    for (let shipData of compBoard.cachedShips) {
-      for (let coordinates of shipData.cachedCoordinates) {
-        if (JSON.stringify(attackCoordinates) === JSON.stringify(coordinates)) {
-          return shipData.ship.isSunk();
-        }
-      }
-    }
+    const attackCoordinates = convertToCoordinates(dataID);
+    const shipData = findShipData(compBoard, attackCoordinates);
+    return shipData.ship.isSunk();
   }
 
   const getLastHitArea = () => {
@@ -168,7 +165,8 @@ const Computer = (compBoard, user) => {
     rotateShip,
     placeGamePieces,
     getLastHitArea,
-    querySink
+    querySink,
+    userName
   };
 };
 

@@ -6,6 +6,7 @@
         }
     }
     main {
+        .fade-out {animation: fadeOut 1s ease-out forwards;}
         p, 
         .bttn-orientation,
         .gameboard {
@@ -30,7 +31,6 @@
         }
         .sound-icon-game {
             @include format-soundIcon;
-            position: absolute;
             top: 23px;
             right: 60px;
         }
@@ -130,7 +130,7 @@
         main {
             .sound-icon-game {
                 width: 20px;
-                right: 25px;
+                right: 8%;
                 top: 20px;
             }
             .gameboard {
@@ -199,7 +199,6 @@
 @media (max-width: 290px) {
     .container {
         main {
-            .sound-icon-game {right: 2px;}
             .bttn-orientation {font-size: 18px;}
             .gameboard {
                 width: 270px;
@@ -207,4 +206,9 @@
             }
         }
     }
+}
+
+@keyframes fadeOut {
+    from {opacity: 1;}
+    to {opacity: 0;}
 }

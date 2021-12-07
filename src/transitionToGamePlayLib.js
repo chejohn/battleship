@@ -11,12 +11,14 @@ const transitionToGamePlay = (hoverEffect, placeShipGUI) => {
         const axisBttn = document.querySelector('.bttn-orientation');
         const main = document.querySelector('main');
         const compBoardGUI = createGameBoardGUI('comp');
+        const soundIcon = document.querySelector('.sound-icon-game');
         return {
             userBoardGUI,
             gameBoardCells,
             axisBttn,
             main,
-            compBoardGUI
+            compBoardGUI,
+            soundIcon
         }
     })();
     const removeEventHandlers = (() => {
@@ -30,6 +32,7 @@ const transitionToGamePlay = (hoverEffect, placeShipGUI) => {
       const console = document.createElement('div');
       console.className = 'game-console';
       const consoleText = document.createElement('p');
+      consoleText.className = 'console-text';
       consoleText.textContent = 'Awaiting Orders, Admiral Ché';
       console.appendChild(consoleText);
       GlobalNodes.main.appendChild(console);
@@ -67,7 +70,23 @@ const transitionToGamePlay = (hoverEffect, placeShipGUI) => {
     const styleBoards = (() => {
         GlobalNodes.userBoardGUI.style.cursor = 'default';
         GlobalNodes.compBoardGUI.style.cursor = 'crosshair';
+        GlobalNodes.userBoardGUI.classList.remove('fade-out');
+    })();
+   const insertAudio = (src, className) => {
+        const audio = document.createElement('audio');
+        audio.src = src;
+        audio.className = className;
+        if (GlobalNodes.soundIcon.id === 'sound-off') audio.muted = true;
+        if (className === 'background-sound') audio.loop = true;
+        document.body.appendChild(audio);
+   }
+    const prepareMusic = (() => {
+        insertAudio('./assets/backgroundSound.mp3', 'background-sound');
+        insertAudio('./assets/fire-shot.mp3', 'fire-shot');
+        insertAudio('./assets/shot-hit.mp3', 'shot-hit');
+        insertAudio('./assets/shot-miss.mp3', 'shot-miss');
     })();
 }
 
 export default transitionToGamePlay;
+
